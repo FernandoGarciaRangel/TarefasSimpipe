@@ -1,0 +1,37 @@
+﻿@page "/categories"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using SimCloudTest.Models
+@using SimCloudTest.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<SimCloudTest.Data.AppDbContext> DbFactory
+
+<PageTitle>Registro de tarefas</PageTitle>
+
+<h1>Registro de tarefas</h1>
+
+<p>
+    <a href="categories/create">Criar nova tarefa</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Categories">
+    <PropertyColumn Property="category => category.Title" />
+    <PropertyColumn Property="category => category.Description" />
+
+    <TemplateColumn Context="category">
+        <a href="@($"categories/edit?id={category.Id}")">Editar</a> |
+        <a href="@($"categories/details?id={category.Id}")">Detalhes</a> |
+        <a href="@($"categories/delete?id={category.Id}")">Apagar</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private AppDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
